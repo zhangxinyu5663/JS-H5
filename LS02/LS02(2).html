@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ls02练习</title>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+//基本类型与引用类型的区别
+//1.内存分配的不同
+	function fool(){
+		var n=10;
+		var m=true;
+		var str="hello world";//str:"hello world"存在栈中
+		var obj={value:"hello world"};
+		//obj的引用存在栈中，{value:"hello world"}存在堆中，通过栈中的变量名obj（访问地址）访问
+	}
+	//全局变量是在window下的
+
+//2.赋值时不同
+  	var obj1={key:2};
+  	var obj2=obj1;
+  	obj2.key=3;
+  	console.log(obj1.key,obj2.key); //3 3
+
+  	var a=2;
+  	var b=a;
+  	a=3;
+  	console.log(a,b); //3 2
+
+//3.判等时不同
+	var a1 = 100;
+	var b1=100;
+	console.log(a1 == b1);  //true
+	console.log(a1 === b1);  //true
+
+	var a2 = new Number(200); 
+	var b2 = new Number(200);
+	console.log(a2 == b2); //false
+	console.log(a2 === b2); //false
+
+	var a3 = new Number(200);
+	var b3 = a3;
+	console.log(a3 == b3); //true
+	console.log(a3 === b3);//true
+
+	b3 = new Number(200);
+	console.log(a3 === b3); //false
+
+//4.作为函数参数传递时的不同
+	var a=123;
+	function fool(x){
+		x=345;
+	}
+	fool(a);
+	console.log(a);  //123
+
+	var a={y:123};
+	function fool(x){
+		x.y=345;
+		x={y:456};
+	}
+	fool(a);
+	console.log(a.y); //345
+
+	var b={y:123};
+	function fool2(x){
+		x={y:456};
+		x.y=345;
+	}
+	fool2(b);
+	console.log(b.y); //123
+</script>
+</html>

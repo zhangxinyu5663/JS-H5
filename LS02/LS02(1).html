@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LS02练习</title>
+	<meta charset="utf-8">
+</head>
+<body>
+</body>
+<script type="text/javascript">
+//数据类型的检测
+//typeof一般用于检验值类型
+	console.log(typeof 123); //number
+	console.log(typeof true);   //boolean
+	console.log(typeof "abc");   //string
+	console.log(typeof null);   //
+	console.log(typeof undefined);   //undefined
+	console.log(typeof {name:"Mike",age:20});   //object
+	console.log(typeof function fool(){});   //function
+
+
+	console.log(typeof Array);   //function
+	console.log(typeof Function);   //function
+	console.log(typeof Date);   //function
+	console.log(typeof Number);   //function
+	console.log(typeof String);   //function
+	console.log(typeof Math);   //object
+
+//instanceof一般用于检验引用数据类型
+	var a={name:"mike",age:18};
+	console.log(a instanceof Object); //true
+	var b=[12,34,{},""];
+	console.log(b instanceof Array); //true
+	console.log(b instanceof Object); //true
+	var Person = function(){
+		//...
+	};
+	var p = new Person();
+	console.log(p instanceof Person); //true
+	console.log(p instanceof Object); //true
+
+	console.log(Math instanceof Function); //false
+	console.log(Number instanceof Function);  //true
+	console.log(Math instanceof Object); //true
+	console.log(Number instanceof Object); //true
+</script>
+</html>
