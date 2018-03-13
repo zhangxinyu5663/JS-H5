@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LS02-包装对象与数据类型转换</title> 
+	<meta charset="utf-8">
+</head>
+<body>
+<script type="text/javascript">
+//undefined的几种情况
+	var a;
+	console.log(a);//undefined
+	// b;
+	// console.log(b); //undeclare,undeclare与undefined不同
+
+	function foo(x,y){
+		console.log(x,y);
+	}
+	foo(1); //1 undefined
+
+	function fee(){
+		//没有返回值
+	}
+	var feereturn=fee();
+	console.log(feereturn); //undefined
+//特别注意
+	console.log(typeof null); //object
+	console.log(typeof NaN); //number
+
+//包装对象
+	var a=123;
+	var b=new Number(a);
+	console.log(a==b); //true,值相同
+	console.log(a===b); //false，类型不同
+
+//临时包装对象
+	var str="abcdef";
+	console.log(str,str.length); //abcdef 6
+	str.length=1;
+	console.log(str,str.length); //abcdef 6,临时包装对象不改变原始值，即基本类型其属性不能被改变、添加或删除（原始值不可变性）
+
+	var arr=[1,2,3,4,5];
+	console.log(arr,arr.length); //[1, 2, 3, 4, 5] 5
+	arr.length=1;
+	console.log(arr,arr.length);//[1] 1
+
+//类型转换——其它类型转为Boolean类型
+	console.log(Boolean(undefined)); //false
+	console.log(Boolean(null)); //false
+	console.log(Boolean(0)); //false
+	console.log(Boolean(NaN)); //false
+	console.log(Boolean(1)); //true
+	console.log(Boolean("")); //false
+	console.log(Boolean("abc")); //true
+	console.log(Boolean({})); //true
+
+//类型转换——其它类型转为Number类型
+	console.log(Number(undefined));	//NaN
+	console.log(Number(null)); //0
+	console.log(Number(true)); //1
+	console.log(Number(false)); //0
+	console.log(Number("")); //0
+	console.log(Number("abc")); //NaN
+	console.log(Number("123.345xx")); //NaN
+	console.log(Number("123.345")); //123.345,Number()只能将纯数字的字符串转为数字
+	console.log(Number("3246,345xx")); //NaN
+	console.log(Number({x:1,y:2})); //NaN
+
+	//注意
+	console.log(parseInt("123.345xx")); //123
+	console.log(parseInt("32343,345xx")); //32343
+	console.log(parseFloat("123.345xx")); //123.345
+	console.log(parseFloat("32343,345xx")); //32343
+
+	var temp="23"-1;
+	console.log(typeof temp); //number
+
+//类型转换——其它类型转为String类型
+	console.log(String(undefined)); //undefined
+	console.log(String(null)); //null
+	console.log(String(true)); //true
+	console.log(String(false)); //false
+	console.log(String(0)); //0
+	console.log(String(234)); //234
+	console.log(String({x:1,y:2})); //[object object]
+
+	console.log(typeof Boolean);  //function
+ 	console.log(typeof Number);  //function
+ 	console.log(typeof String);  //functionS
+//隐式类型转换
+	//比较运算符
+	var a=3;
+	var b=4;
+	console.log(typeof (a>b),a>b);//Boolean false
+	console.log(typeof (a==b),a==b); //Boolean false
+	console.log(typeof (a<b),a<b);//Boolean true
+	//算术运算符
+	var c="img"+3+".jpg";
+	var d="23"-5;
+	var m="23"+5;
+	console.log(c,d,m);//img3.jpg  18  235
+	console.log(typeof d);//number
+	//逻辑运算符
+	var e=!123;
+	var f=!!34;
+	var g=!!{};
+	console.log(e,f,g); //false true true
+	//流程语句
+	var h={x:1};
+	if(h){
+		console.log("h:",h);
+	}
+</script>
+</body>
+</html>
