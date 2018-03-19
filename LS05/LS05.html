@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS赋值、算数、关系运算符</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+//1.赋值运算符
+	var a=34;
+	if(a=45){
+		console.log("hi");
+	}
+	//结果 输出hi
+	
+	var a=34;
+	if(45=a){
+		console.log("hello");
+	}
+	//报错
+	
+	var a=34;
+	if(45==a){
+		console.log("hi");
+	}else{
+		console.log("hello");
+	}
+	//输出hello
+	//表达式反写的好处 便于区分第一个例子和第三个例子，给程序员找错带来方便
+	
+//2.算数运算符
+	console.log("2"+"abc");  //2abc  字符串类型
+	console.log("1"+2);  //12 字符串类型
+	console.log(1+{});  //1[object Object] 字符串类型
+	console.log(true+true); //2 
+	console.log("5"-3);  //2
+	console.log("ab"-2);  //NaN
+
+	var m="1";
+	console.log(++m); // 2  发生隐式类型转换(注意++和--的隐式类型转换)
+
+	var n="1";
+	console.log(n+=1); // 11
+	console.log(typeof n); //string
+	var b="11";
+	b/=1;
+	console.log(b); // 11
+	console.log(typeof b); //number
+
+	var i = 1;
+	var y = ++i + ++i + ++i;
+	console.log(y); //输出9 2+3+4  但在c语言里输出12，因为i先做了三次自增变为4 最后4+4+4
+
+//3.关系运算符
+	//"==":如果类型不同，先转换再比较(注意：转换方向为引用类型到基本类型)
+	//"==="：若类型不同则为false，若类型相同，则判断方法和"=="一样
+	console.log(3===3);  //true
+	console.log(3==="3");  //false
+	console.log(3=="3");  //true
+	console.log(3==new String(3));  //true
+	console.log(3===new String(3));  //false
+
+	console.log(2==2); //true
+	console.log(new Number(2) == new Number(2)); //false
+	console.log(2==new Number(2)); //true  注意是引用类型转换到基本类型
+
+	var obj1=new String("xyz");
+	var obj2=new String("xyz");
+	console.log("xyz"===obj1); //false
+	console.log(obj1==obj2); //false
+	console.log(obj1===obj2); //false
+	console.log(obj1==new String("xyz")); //false
+
+	var obj1 = new String("xyz");
+	var obj2 = obj1;
+	console.log("xyz"===obj1); //false
+	console.log(obj1 == obj2);  //true
+	console.log(obj1 === obj2); //true
+	console.log(obj1 == new String("xyz")); //false
+
+	//"!=":相当于"=="的逆运算:
+	//"!==":先判断类型，若类型不同则返货true，相当于"==="的逆运算
+	var obj1 = new String("xyz");
+	var obj2 = new String("xyz");
+	console.log("xyz"!=obj1); //false
+	console.log(obj1 !== obj2); //true
+	console.log(obj1 != obj2); //true
+	console.log(obj1 != new String("xyz"));	//true
+
+//补充
+	var obj1={x:2,y:[1],z:false};
+	var obj2={x:2,y:[1],z:new Boolean(true)};//不应该写成 z:new Boolean(true),有二义性
+	console.log(obj1.x===obj2.x); //true
+	console.log(obj1.y===obj2.y); //false
+	console.log(obj1.z===obj2.z); //false
+	console.log(obj1.x==obj2.x); //true
+	console.log(obj1.y==obj2.y); //false
+	console.log(obj1.z==obj2.z); //false
+</script>
+</html>
