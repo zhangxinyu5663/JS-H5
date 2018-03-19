@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS语法、表达式及语句</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+//JS中arguments的使用
+	function f(a){
+		console.log(a);
+		console.log(arguments[1]);
+		console.log(arguments[2]);
+	} 
+	f(1,2,3);//输出 1  2  3
+
+//ES5中没有块作用域
+	for(var i=0;i<5;i++){
+		console.log("in for",i);
+	}
+	console.log("out for",i); //i=5, 最后变量i会冲出块作用域
+
+	{
+		var a=20;	
+	}
+	console.log(a); //20  大括号外依然能访问到a
+
+	if(true){
+		var a=30;
+	}
+	console.log(a); //30
+
+	if(false){
+		var b=30;
+	}
+	console.log(b); //undefined
+//JS严格模式
+	// 严格模式使用方式
+	"use strict"//全局使用
+
+	function foo() {
+    	"use strict"//函数内部使用
+	}
+
+	//严格模式与非严格模式的区别
+	//(1)严格模式下的全局变量需显式声明
+	function foo(){
+		a=123;
+	}
+	foo();
+	console.log(a); //123
+
+	function foo(){
+		'use strict'
+		a=123;
+	}
+	foo();
+	console.log(a); //报错
+
+	//(2)一般函数中的this，非严格模式下指全局变量，严格模式下为undefined
+	function isStrictMode(){
+		if(this==undefined){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	console.log(isStrictMode()); //false
+
+	"use strict"
+	function isStrictMode(){
+		if(this==undefined){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	console.log(isStrictMode()); //true	
+
+	//(3)严格模式下禁止删除不可改变的属性和未定义的变量
+	var str = "abc";
+	function func(){
+		str.length=7;
+		console.log(str.length);
+	}
+	func(); //3
+
+	function func(){
+		'use strict'
+		str.length=7;
+		console.log(str.length);
+	}
+	func();  //报错
+
+	delete bbb;
+	delete window.bbb;
+	//true
+	
+	'use strict'
+	delete ccc;
+	//报错
+	
+	//(4)严格模式下禁止函数参数重名
+	function f(a,a,b){
+		return a+b;
+	}
+	f(2,3,4);  //7
+
+	"use strict"
+	function f(a,a,b){
+		return a+b;
+	}
+	f(2,3,4); // 报错	
+	
+//Switch
+	//switch语句中的case在比较时使用的是全等操作符比较，因此不会发生隐式类型转换
+	var i = "1";
+	switch(i){
+		case 1:
+			console.log("case 1 number");
+			break;
+		default:
+			console.log("default");
+	}
+	//输出default  因为i为字符串类型 在比较时是全等比较，i不会发生类型转换var i = "1";
+	
+	var i = "1";
+	switch(i){
+    case 1:
+        console.log("case 1 Number");
+        break;
+    case "1":
+        console.log("case 1 String");
+        break;
+    default:
+        console.log("default");
+	}
+	//输出 case 1 String
+	
+	var j=new Number(23);
+	switch(j){
+		case 23:
+			console.log("case 111");
+			break;
+		case "23":
+			console.log("case 222");
+			break;
+		case new Number(23):
+			console.log("case 333");
+			break;
+		default:
+			console.log("default");
+
+	}
+	//输出 default  因为对象类型在比较时看内存空间是否相同 所以不输出case 333
+	
+	var i = 65;
+	switch(true){ 
+    	case i>=60:
+       	 alert('及格');
+        	break;
+    	case i<60:
+        	alert('不及格');
+        	break;
+    	default:
+        	alert('default');
+	}	
+	//结果 提示'及格
+
+	var i = 65;
+	switch(new Boolean(true)){ 
+    	case i>=60:
+        	alert('及格');
+        	break;
+    	case i<60:
+        	alert('不及格');
+        	break;
+    	default:
+        	alert('default');
+	}
+	//结果  提示default
+	
+	//switch的穿透性
+	switch(i){
+    	case 1:
+        	console.log("case 1");
+    	case 2:
+        	console.log("case 2");
+        	break;
+    	case 3:
+        	console.log("case 3");
+    	case 4:
+        	console.log("case 4");
+    	default:
+        	console.log("default");
+	}	
+	//当i=1 输出case 1，case 2
+	//当i=2 输出case 2
+	//当i=3 输出case 3，case 4，default
+	//当i=4 输出case 4，default
+	
+//for...in
+	//for...in常用来遍历对象
+	var obj={x:10,y:20,z:"30"};
+	for(var k in obj){
+		console.log(k,obj[k],typeof obj[k]);
+	}
+	//输出
+	//x 10 number
+	//y 20 number
+	//z 30 string
+	
+	var obj1={x:1};
+	var obj2=Object.create(obj1);
+	obj2.y=2;
+	obj2.z=3;
+	for(var k in obj2){
+		console.log(k,obj2[k]);
+	}
+	//输出
+	//y 2
+	//z 3
+	//x 1
+	
+	//for...in遍历数组
+	var arr=[2,,"33"];
+	for(var i in arr){
+		console.log(i,arr[i]);
+	}
+//扩展知识
+	function foo(){
+		var a=b=3;
+		//等价于 
+		//var a=3;
+		//b=3;  即b是全局变量，a是局部变量
+	}
+	foo();
+	console.log("b:",b); //b:3
+	console.log("a:",a); //报错
+</script>
+</html>
