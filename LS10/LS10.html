@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS作用域及执行上下文</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+//1.JS作用域及其特点
+	//注意变量的可访问范围
+var a=10,b=20;
+function fn(){
+	var a=100,c=200;
+	function bar(){
+		var a=500,d=600;
+		console.log(a,b,c,d);
+	}
+	bar();
+}
+fn(); // 500 20 200 600
+console.log(a,b); // 10 20
+
+var a=10,b=20;
+function fn(){
+	var a=100,c=200;
+	function bar(){
+		var a=500,d=600;
+	}
+	bar();
+	console.log(a,b,c,d);
+}
+fn(); // 报错 因为访问不到d
+
+var a=10,b=20;
+function fn(){
+	var a=100,c=200;
+	function bar(){
+		var a=500;
+		d=600; //现在d变成了全局的
+	}
+	bar();
+	console.log(a,b,c,d);
+}
+fn(); // 100 20 200 600
+ 	//JS采用的是词法作用域 与调用形式无关
+var name = "Jack";
+function echo() {
+    console.log(name);
+}
+function foo() {
+    var name = "Bill";
+    echo();
+}
+foo();//Jack
+
+var name = "Jack";
+function echo() {
+    console.log(name);
+}
+function foo() {
+    var name = "Bill";
+    function fee(){
+        var name = "Lucy";
+        echo();
+    }
+    fee();
+}
+foo();//Jack
+
+	//通过new Function创建的函数对象不一定遵从静态词法作用域
+var scope="global";
+function checkScope(){
+	var scope="local";
+	return function(){
+		return scope;
+	};
+}
+console.log(checkScope()()); //local
+
+var scope="global";
+function checkScope(){
+	var scope="local";
+	return new Function("return scope");
+}
+console.log(checkScope()()); //global
+
+	//JS（ES5）无块作用域 变量污染问题及解决方案
+var userid = 123;
+document.onclick=function(){
+	console.log(userid);
+};
+if(true){
+	var userid=234;
+}
+//点击页面 输出234
+
+var userid = 123;
+document.onclick=function(){
+	console.log(userid);
+};
+(function(){ //添加函数立即执行表达式解决变量污染问题
+	if(true){
+		var userid=234;
+	}
+}());
+//点击页面 输出 123
+
+var userid = 123;
+document.onclick=function(){
+	console.log(userid);
+};
+(function(){
+	if(true){
+		userid=234;
+	}
+}());
+//点击页面 输出234
+
+//2.JS执行上下文与调用栈
+	//JS运行时会产生多个执行上下文，处于活动状态的执行上下文环境只有一个
+	//调用栈
+console.log("全局上下文-start");
+var x = 1;
+function foo(){
+    console.log("foo上下文-start");//设置断点
+    var y = 2;
+    function bar(){
+        console.log("bar上下文-start");//设置断点
+        var z = 3;
+        console.log(x+y+z);
+        console.log("bar上下文-end");//设置断点
+    }
+    bar();
+    console.log("foo上下文-end");//设置断点
+}
+foo();//设置断点
+console.log("全局上下文-end");//设置断点
+//若现在执行到第133行 则Call Stack显示：
+//bar
+//foo
+//(anonymous)
+
+//3.作用域链与执行上下文
+//执行时，当前执行上下文，对应一个作用域链环境来管理和解析变量和函数（动态性）
+// 变量查找按照由内到外的顺序（遵循词法作用域），直到完成查找，若未查询到则报错
+// 当函数执行结束，运行期上下文被销毁，此作用域链环境也随之被释放
+
+</script>
+</html>
