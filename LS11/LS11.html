@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS的立即执行表达式IIFE</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript" >
+//1.立即执行表达式IIFE
+//常见形式
+(function max(a,b){ //也可以没有函数名
+	return a>b?a:b;	
+}(4,5)); //5
+
+(function add(a,b){
+	return a+b;
+})(4,5); //99
+
+//注意 IIFE是个立即执行表达式 必须用分号结尾
+(function() {
+    console.log("111");
+})();//没有分号的话会报错
+(function () {
+    console.log("222");
+})()
+//111
+//222
+
+//其他形式 与运算符结合的写法
+var i = function(){
+    return 10;
+}();
+i;  //10
+
+var i = function(){
+    return 10;
+};
+i(); //10
+
+true && function(a,b){
+    return a>b?a:b;
+}(5,9); //9
+
+0 && function(a,b){
+    return a>b?a:b;
+}(5,9); //0
+
+
+!function(x,y){
+    return x==y?true:false; // === 返回什么
+}("5",5);
+//false
+
+!function(x,y){
+    return x===y?true:false; // === 返回什么
+}("5",5);
+//true
+
+//2.通过IIFE来解决问题
+//解决变量污染问题 限制变量的生命周期
+	var x=10;
+	document.onclick=function(){
+		alert("x="+x);
+	};
+	if(true){
+		var x=20;
+	}	
+	//点击页面弹出x=20
+	
+	var x=10;
+	document.onclick=function(){
+		alert("x="+x);
+	};
+	(function(){
+		if(true){
+			var x=20;
+		}
+	}());
+	//点击页面弹出x=10
+	
+//避免变量共享错误
+function f(){
+	var getNumFuncs=[]; //一个函数数组
+	for(var i=0;i<10;i++){
+		getNumFuncs[i]=function(){
+			return i;
+		};
+	}
+	return getNumFuncs;
+} //最后i会冲出作用域
+var tmp=f();
+tmp[3](); //10
+tmp[4](); //10
+tmp[0](); //10
+
+function f(){
+	var getNumFuncs=[];  
+	for(var i=0;i<10;i++){
+		(function(j){ //添加函数立即执行表达式
+			getNumFuncs[j]=function(){
+				return j;
+			};
+		}(i));
+	}
+	return getNumFuncs;
+} 
+var tmp=f();
+tmp[3](); //3
+tmp[5](); //5
+tmp[0](); //0
+//若改为
+function f(){
+	var getNumFuncs=[];
+	var j;
+	for(var i=0;i<10;i++){
+		j=i;
+		getNumFuncs[i]=function(){
+			return j;
+		};
+	}
+	return getNumFuncs;
+}
+var tmp=f();
+tmp[3](); //9
+tmp[0](); //9
+</script>
+</html>
