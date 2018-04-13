@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS闭包(closure)</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+//1.闭包的概念 闭包是一个函数外加上该函数创建时所建立的作用域
+function f1(){
+	var x=1;
+	function f2(){
+		return x++;
+	}
+	return f2();
+}
+var f3=f1();
+console.log(f3); // 1
+console.log(f3); // 1
+
+function f1(){
+	var x=1;
+	function f2(){
+		return x++;
+	}
+	return f2;
+}
+var f3=f1();
+console.log(f3()); // 1
+console.log(f3()); // 2
+console.log(f3()); // 3  因为变量x常驻内存
+
+	//闭包是词法作用域中的函数和其相关变量的包裹体
+	//若一个函数离开了它被创建时的作用域，它还是会与这个作用域的变量相关联
+function createInc(starValue){
+	return function(step){
+		starValue+=step;
+		return starValue;	
+	}
+}
+var inc=createInc(5);
+console.log(inc(1)); // 6 5+1
+console.log(inc(2)); // 8 6+2 因为变量starValue没被释放掉
+
+var inc2=createInc(5); //此时与inc对应的不是同一个闭包
+console.log(inc(1)); //9 8+1
+console.log(inc2(1)); // 6
+
+inc=createInc(5);
+console.log(inc(1)); //6 因为starValue又变为5
+
+function foo() {
+    var i = 0;
+    function bar() {
+        console.log(++i);
+    }
+    return bar();
+}
+foo(); // 1
+foo(); // 1
+
+function foo(){
+	var i=0;
+	function bar(){ 
+	 //函数bar和其相关词法上下文中的变量i构成了一个闭包
+		console.log(++i);
+	}
+	return bar; //返回的函数bar，依然能够访问到变量i（藕断丝连）
+}
+var a=foo();
+var b=foo(); //a和b不是同一个闭包
+a(); // 1
+a(); // 2 
+b(); // 1
+
+//2.闭包的常见形式
+	//以函数对象形式返回
+	//例1
+var tmp=100; //这里的tmp是自由变量 尽管能够访问到 但是闭包不包括它
+function foo(x){
+	var tmp=3;
+	return function(y){
+		console.log(x+y+(++tmp));
+	}
+}
+var fee=foo(2);
+fee(10); //16 2+10+4
+fee(10); //17 2+10+5
+fee(10); //18 2+10+6
+
+var tmp=100; //这里的tmp是自由变量 尽管能够访问到 但是闭包不包括它
+function foo(x){
+	//var tmp=3; 屏蔽此行
+	return function(y){
+		console.log(x+y+(++tmp));
+	}
+}
+var fee=foo(2);
+fee(10); //113 2+10+101
+fee(10); //114 2+10+102
+fee(10); //115 2+10+103
+	
+	//闭包嵌套
+function f1(m){
+	var z = 100;
+	function f2(x) {
+    	return function (y) {
+        	console.log(x + y + (++z));//设置断点，查看有几个闭包
+    	}
+	}
+	return f2(m);
+}
+var f3 = f1(2); 
+f3(10); //113 2+10+101
+f3(10); //114 2+10+102
+
+	//例2
+function foo(x){
+	var tmp=3;
+	return function(y){
+		x.count=x.count?x.count+1:1;
+		console.log(x+y+tmp,x.count);
+	}	
+}
+var age=new Number(2);
+var bar=foo(age); //和相关作用域形成了一个闭包
+bar(10);//15 1    2+10+3,1
+bar(10);//15 2    2+10+3,2
+bar(10);//15 3    2+10+3,3
+
+	//例3
+function fn() {
+    var max = 10;//若屏蔽此行，则输出100
+    return function bar(x) {
+        if(x > max){
+            console.log(x);
+        }else {
+            console.log(max);
+        }
+    }
+}
+var f1 = fn();
+var max = 100;
+f1(15); //15  
+
+	//作为对象的方法返回
+function counter(){
+	var n=0;
+	return {
+		count:function () { return ++n; },
+		reset:function () { n=0;return n; }
+	}
+}
+var c=counter(),d=counter();
+console.log(c.count()); // 1
+console.log(d.count()); // 1
+console.log(c.reset()); // 0
+console.log(c.count()); // 1
+console.log(d.count()); // 2
+
+//3.闭包的作用及常用场景
+//（1）可通过闭包来访问隐藏在函数作用域内的局部变量
+	//例1
+function f1(){
+    var n = 999;
+    function f2(){
+        console.log(++n);
+    }
+    return f2;
+}
+var f = f1();
+f(); //1000
+f(); //1001
+
+	//例2
+var n = 10;
+function f1(){
+    var n=999;
+    nAdd=function(){n+=1;};
+    function f2(){
+        console.log(n);
+    }
+    return f2;
+}
+var result=f1();
+result(); // 999
+nAdd();
+result(); // 1000 
+//函数f1中的局部变量n一直保存在内存中，并没有在f1调用后被自动清除，
+//原因就在与f2被赋给了一个全局变量，全局变量没被释放，这导致f2始终在内存中，而f2和n形成了对应作用域（f1）的闭包，故f1中的n不会在调用结束后，被垃圾回收机制回收
+	
+	//例3
+function Person(){
+    var name = "default";
+    return {
+        getName : function(){
+            return name;
+        },
+        setName : function(newName){
+            name = newName;
+        }
+    }
+};
+var john = Person();
+console.log(john.getName()); //default
+john.setName("john");
+console.log(john.getName()); //john
+
+var jack = Person();
+console.log(jack.getName()); //default
+jack.setName("jack");
+console.log(jack.getName()); //jack
+
+	//例4
+var m = 10;
+function f1(){
+    nAdd=function(){++m;};
+    function f2(){
+        console.log(m);
+    }
+    return f2;
+}
+var result1=f1();
+var result2=f1();
+result1(); // 10
+nAdd(); //现在m变为11
+result2(); //11
+result2(); //11
+
+//（2）使函数中的变量被保存在内存中不被释放（单例模式）
+	//例5
+function fn() {
+    var a;
+    return function() {
+        return a || (a = document.body.appendChild(document.createElement('div')));
+    }
+};
+var f = fn();
+f(); //<div></div> 就算再加一个或多个f(); 最终也只有一个<div></div>
+
+	//例6
+function closureExample(objID, text, timedelay) {
+    setTimeout(function() {
+        //document.getElementById(objID).innerHTML = text;
+        console.log(objID,text);
+    }, timedelay);
+}
+closureExample("myDiv","Closure is Create", 2000);
+
+	//例7
+var db=(function(){
+	var data={}; //创建一个隐藏的object，这个object持有一些数据，从外部是不能访问这个object的
+	return function(key,val){
+		if(val==undefined) { return data[key];} //get
+		else { return data[key]=val; } //set
+	}
+	//返回这个匿名函数，它形成了一个闭包
+})(); 
+db('x'); // undefined
+db('x',1);   //尽管不能访问object本身，但我们可以设置它的成员
+db('x'); // 1
+
+</script> 
+</html>
