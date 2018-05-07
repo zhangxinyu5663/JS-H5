@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Date日期</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+//1.Date简介及创建Date对象
+	//通过构造函数创建Date对象的4种形式
+var date=new Date(2018,5,7,14,26,22);
+console.log(date); //Thu Jun 07 2018 14:26:22 GMT+0800 (中国标准时间)
+//注意：月0-11，日：1-31，时：0-23，分：0-59，秒：0-59，毫秒：0-999
+
+var date2 = new Date(17,9,18,12,34,1);//若years为2位的话自动加1900
+console.log(date2); //Thu Oct 18 1917 12:34:01 GMT+0800 (中国标准时间)
+
+var date3 = new Date("2017-08-09");//注意日期的格式 此处的08代表8月还是9月，对比上一个创建形式
+console.log(date3); //Wed Aug 09 2017 08:00:00 GMT+0800 (中国标准时间)
+
+var date4 = new Date(1000); //1970-01-01:00:00:01
+console.log(date4);//Thu Jan 01 1970 08:00:01 GMT+0800 (中国标准时间)    逆运算是date4.getTime();
+
+var date5 = new Date();//new Date(Date.now());  当前时间
+console.log(date5); //Mon May 07 2018 14:32:34 GMT+0800 (中国标准时间)
+
+var date6 = new Date(NaN);  //无效日期
+console.log(date6);//Invalid Date
+date6 instanceof Date;  //true
+
+	//有无new的区别
+var d1 = new Date();
+var d2 = Date();
+console.log(d1,typeof d1);//Mon May 07 2018 14:35:47 GMT+0800 (中国标准时间) "object"
+console.log(d2,typeof d2);//Mon May 07 2018 14:35:47 GMT+0800 (中国标准时间) string
+
+//2.Date方法
+//Date静态方法（Date构造器函数对象的方法）GMT 格林尼治时间
+console.log(Date.now());//以毫秒为单位返回当前时间（从1970年1月1日00:00:00开始计算）
+console.log((new Date()).getTime());
+
+console.log(Date.parse("1970-01-01"));
+//dateTimeString字符串转换成毫秒
+console.log(Date.parse("1970-01-02"));
+
+console.log(Date.UTC(2017,9,1));
+//将给定的日期转换成毫秒,解释为UTC 协调世界时间
+
+
+//Date原型方法
+//getter和setter相关
+var d = new Date("1978-11-25");
+console.log(d.getFullYear(),d.getMonth(),d.getDay(),d.getDate(),d.getHours()); //1978 10 6 25 8 0 0
+//getTimezoneOffset() 方法返回协调世界时（UTC）相对于当前时区的时间差值，单位为分钟
+console.log(d.getTimezoneOffset()); //-480
+d.setDate(11);
+console.log(d.getFullYear(),d.getMonth(),d.getDay(),d.getDate(),d.getHours()); //1978 10 6 11 8
+d.setFullYear(1999,5,3);
+console.log(d.getFullYear(),d.getMonth(),d.getDay(),d.getDate(),d.getHours());
+
+//转成字符串相关
+var d = new Date(2012,3,21,15,7,23,234);
+console.log(d.toTimeString());
+console.log(d.toDateString());
+console.log(d.toLocaleTimeString());
+console.log(d.toLocaleDateString());
+console.log(d.toJSON());
+
+	//查看指定月份的相应日期 对应 星期几
+var today=new Date();
+today.setMonth(6);
+console.log(today); //Sat Jul 07 2018 14:47:01 GMT+0800 (中国标准时间)
+console.log(today.getDay()); //6
+
+	//查看当前日期加上多少天后对应的日期
+var today=new Date();
+var newDate=new Date(today.getTime()+1000*3600*24*50);
+console.log(newDate); //Tue Jun 26 2018 15:03:37 GMT+0800 (中国标准时间)
+
+//3.日期和时间格式
+//时间比较与运算（转化为毫秒之后再进行比较和运算）
+console.log(new Date("1970-01-02") > new Date("1970-01-01")); 
+//true
+console.log(new Date("1970-01-02") - new Date("1970-01-01"));
+//86400000
+</script>
+</html>
