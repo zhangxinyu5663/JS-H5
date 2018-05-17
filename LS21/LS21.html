@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Error及异常处理</title>
+	<meta charset="utf-8">
+</head>
+<body>
+</body>
+<script type="text/javascript">
+//1.JS异常处理
+//JS中异常处理的作用（处理程序运行时出现的异常）
+//语法   try必须有  catch或finally至少有一个
+	// try...catch
+	// try...finally
+	// try...catch...finally
+try{
+	var a=new Array(-5);
+	console.log("xx");
+}
+catch(e){
+	console.log(e);
+}
+finally{
+	console.log("finally");
+}
+// 输出
+// RangeError: Invalid array length
+//		at <anonymous>:2:8
+// finally
+
+try{
+	console.log("xx");
+	var a=new Array(-5);
+}
+catch(e){
+	console.log(e);
+}
+finally{
+	console.log("finally");
+}
+//输出 
+// xx
+// RangeError: Invalid array length
+//     at <anonymous>:4:8
+// finally
+
+try{
+	throw "abc";
+}
+catch(e){
+	console.log(e);
+}
+// abc
+
+try{
+	console.log("xx");
+}
+catch(e){
+	console.log(e);
+	console.log("zz");
+}
+// xx
+
+try {
+    try{
+        throw "ErrorMessage11";
+    }
+    finally {
+        console.log("finally 111");
+    }
+}
+catch (e) {
+    console.log("outside catch",e);
+}
+finally {
+    console.log("finally 222");
+}
+// finally 111
+// outside catch ErrorMessage11
+// finally 222
+
+try {
+    try{
+        throw "ErrorMessage11";
+    }
+    catch (e){
+        throw "ErrorMessage22"; //抛出异常后将直接跳出catch，catch内后续代码不再执行
+		console.log("inside catch",e);
+    }
+    finally {
+        console.log("finally 111");
+    }
+}
+catch (e) {
+    console.log("outside catch",e);
+}
+finally {
+    console.log("finally 222");
+}
+// finally 111
+// outside catch ErrorMessage22
+// finally 222
+
+try {
+    try{
+        throw "ErrorMessage11";
+    }
+    catch (e){
+		console.log("inside catch",e);
+		throw "ErrorMessage22"; 
+    }
+    finally {
+        console.log("finally 111");
+    }
+}
+catch (e) {
+    console.log("outside catch",e);
+}
+finally {
+    console.log("finally 222");
+}
+// inside catch ErrorMessage11
+// finally 111
+// outside catch ErrorMessage22
+// finally 222
+
+	//补充console的其他用法
+console.warn("xx");
+console.error("yy");
+console.assert(3<2,"xx"); //若前面的表达式为真则不返回任何语句
+console.assert(3>2,"有问题的话会输出这句话11111");
+console.assert(2==="2","有问题的话会输出这句话22222");
+
+
+/*
+catch语句中包含要执行的语句，当try语句中抛出错误时,
+也就是，你想让try语句中的内容成功， 如果没成功，你想控制接下来发生的事情，这时你可以在catch语句中实现。
+如果有在try块中有任何一个语句（或者从try块中调用的函数）抛出异常, 控制立即转向catch子句。
+如果在try块中没有异常抛出，则catch子句将会跳过。
+finally子句无论是否有异常抛出或着是否被捕获它总是执行。
+可以嵌套一个或者更多的try语句,如果内部的try语句没有catch子句，那么将会进入包围它的try语句的catch子句。
+ */
+
+ //JS中异常处理嵌套的情况
+try{
+ 	try{
+ 		throw "oops"; //抛出异常
+ 	}
+ 	catch(ex){
+ 		console.log("inner",ex); //就近捕获
+ 	}
+ 	finally{
+ 		console.log("finally");
+ 	}
+ }
+ catch(ex){
+ 	console.log("outer",ex);
+ }
+// inner oops
+// finally
+
+ try{
+ 	try{
+ 		throw "oops";
+ 	}
+ 	catch(ex){
+ 		console.log("inner",ex);
+ 		throw ex; //又抛出异常
+ 	}
+ 	finally{
+ 		console.log("finally");
+ 	}
+ }
+ catch(ex){
+ 	console.log("outer",ex);
+ }
+ //inner oops
+ //finally
+ //outer oops
+ 
+//JS中的异步回调函数捕获异常的问题
+try{
+	function abc(x,cb){
+		console.log(x);
+		cb();
+	}
+	abc("xx",function(){
+		var arr=new Array(-1);
+	});
+}
+catch(e){
+	console.log(e);
+} 
+//xx
+//能捕获到异常
+
+	//典型的异步
+try{
+	function abc(x,cb){
+		console.log(x);
+		cb();
+	}
+}
+catch(e){
+	console.log(e);
+} 
+abc("xx",function(){
+	var arr=new Array(-1);
+});
+//x
+//捕获不到异常
+
+
+//2.Error对象及其子对象
+	//引用错误  ReferenceError
+try
+{
+    var x = y;// 没有定义y所以产生错误。如果有y的话，不会抛异常错误
+}catch(e){
+    console.log(e.name,e.message);
+}
+finally {
+    console.log("finally");//有无异常该句都会执行
+}
+// ReferenceError y is not defined
+// finally
+
+	//范围错误 RangeError
+try{
+    var a= new Array(-1);
+}catch(e){
+    console.log(e.name,e.message);
+}
+finally {
+    console.log("finally");//有无异常该句都会执行
+}
+// RangeError Invalid array length
+// finally
+
+	//类型错误  TypeError 
+try{
+    var a;
+    a.aa();
+    //var a= new 123; //在chrome中测试
+}catch(e){
+    console.log(e.name,e.message);
+}
+finally {
+    console.log("finally"); 
+}
+// TypeError Cannot read property 'aa' of undefined
+// finally
+
+try{
+	var a= new 123;
+}catch(e){
+    console.log(e.name,e.message);
+}
+finally {
+    console.log("finally"); 
+}
+// TypeError 123 is not a constructor
+// finally
+
+	//自定义错误 UserException
+//输入月份异常案例 注意可以在外层进行捕获异常错误
+function UserException(message) {
+    this.message = message;
+    this.name = "UserException";
+}
+UserException.prototype.__proto__=Error.prototype;
+
+function getMonthName(mo) {
+    mo = mo-1; // 调整月份数字到数组索引 (1=Jan, 12=Dec)
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+        "Aug", "Sep", "Oct", "Nov", "Dec"];
+    if (months[mo] !== undefined) {
+        return months[mo];
+    } else {
+        throw new UserException("InvalidMonthNo");
+    }
+}
+try {
+    // statements to try
+    var myMonth = 15; // 15 超出边界并引发异常
+    getMonthName(myMonth);
+} catch (e) {
+    console.log(e.message, e.name); // 传递异常对象到错误处理
+}
+// InvalidMonthNo UserException
+
+	//补充
+try {
+    throw n; // 抛出一个数值异常
+} catch (e) {
+    if (e <= 50) {
+        // 异常在 1-50 之间时，直接处理
+    } else {
+        // 异常无法处理，重新抛出，可再外层再次被捕获
+        throw e;
+    }
+}
+
+	//错误类型测试
+try {
+    throw new RangeError();
+    // throw new TypeError();
+    // throw new ReferenceError();
+} catch (e) {
+    if (e instanceof TypeError) {
+        console.log("TypeError");
+    } else if (e instanceof RangeError) {
+        console.log("RangeError");
+    } else if (e instanceof ReferenceError) {
+        console.log("ReferenceError");
+    } else {
+        console.log("OtherError");
+    }
+}
+
+</script>
+</html>
