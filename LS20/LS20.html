@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>正则表达式</title>
+	<meta charset="utf-8">
+</head>
+<body>
+</body>
+<script type="text/javascript">
+//一.正则表达式简介及正则对象
+//1.正则对象的创建方式一 通过字面量直接创建
+var reg1 = /[bcf]at/gi;
+
+//正则对象的创建方式二 通过RegExp构造函数来实例化正则对象
+var reg2 = new RegExp(/[bcf]at/,"gi");//常见
+var reg3 = new RegExp("[bcf]at","gi");
+
+console.log("a fAt bat ,a faT cat".match(reg1));
+//["fAt", "bat", "faT", "cat"] 同reg2和reg3
+
+//2.正则的语法概述和修饰符
+	//g全局、i大小写、m换行
+var regExp = /a?b/gi;
+var matchResult = "xxabcaabbbxyz".match(regExp);
+console.log(matchResult); //["ab", "ab", "b", "b"]
+
+var regExp = /ab/i;
+var matchResult = "xxAbcaaBbxyz".match(regExp);
+console.log(matchResult); //["Ab", index: 2, input: "xxAbcaaBbxyz"]
+
+var regExp = /ab/gi;
+var matchResult = "xxAbcaaBbxyz".match(regExp);
+console.log(matchResult); //["Ab", "aB"]
+
+var regExp = /a*b/gi; //*代表出现0次或多次（任意一次）
+var matchResult = "xxAbcaaBbxyz".match(regExp);
+console.log(matchResult); //["Ab", "aaB", "b"]
+
+var regExp = /a.b/gi;// .代表一个除了回车和换行符之外的所有字符 等效于[^\r\n]
+var matchResult = "xxAdbcabaaBbxyz".match(regExp);
+console.log(matchResult);
+// ["Adb", "aaB"]
+
+//3.正则对象的两种基本使用方式 (1).字符串.字符串方法（正则对象） (2).正则对象.正则方法（字符串）
+console.log("a2b3c4d".replace(/[2-3]/,"x")); //axb3c4d
+console.log("a2b3c4d".replace(/[2-3]/g,"x")); //axbxc4d
+
+	//test初步了解
+var regExp = /a/i; //不写g,每次都是从0开始匹配
+console.log(regExp.test("ab")); //true
+console.log(regExp.test("ab")); //true
+console.log(regExp.test("ab")); //true
+console.log(regExp.test("ab")); //true
+
+var regExp = /a/gi;
+console.log(regExp.test("ab"));//true
+console.log(regExp.lastIndex); //1
+console.log(regExp.test("ab"));//false 
+console.log(regExp.lastIndex); //0
+console.log(regExp.test("ab"));//true
+console.log(regExp.lastIndex); //1
+console.log(regExp.test("ab"));//false 
+console.log(regExp.lastIndex); //0
+
+var regExp = /a/gi;
+while (regExp.test("aaa")){
+    console.log(regExp.lastIndex);//每次执行后从哪开始重新匹配
+} 
+console.log(regExp.lastIndex);
+//1 2 3 0
+
+//4.正则对象相关符
+	// \b 匹配一个词的边界  一个词的边界就是一个词不被另外一个词跟随的位置或者没有其他字符在它前面的位置 字符两边是边界才替换 
+	// \B 匹配一个非单词边界 表示字符两边不是边界才替换 注意:一个匹配的词的边界并不包含在匹配的内容中
+console.log(/oo/.test("moon")); //true
+console.log(/oo\b/.test("moon")); //false
+console.log(/oon\b/.test("moon")); //true
+console.log(/\boo/.test("moon")); //false
+
+console.log("moon".search(/oo/));//1 search方法返回的是匹配到的下标
+console.log("moon".search(/oo\b/));//-1
+console.log("moon".search(/oon\b/));//1
+console.log("moon".search(/\boo\b/));//-1
+
+console.log(/oo\B/.test("moon")); //true
+console.log(/oon\B/.test("moon")); //false
+console.log(/\Boo/.test("moon")); //true
+console.log(/\Boo\B/.test("moon")); //true
+
+console.log("moon".match(/oo\B/));//["oo", index: 1, input: "moon"]
+console.log("moonoonxoo".match(/oo\B/));//["oo", index: 1, input: "moonoonxoo"]
+console.log("moon".match(/oon\B/));//null
+console.log("moo".match(/\Boo\B/));//null
+
+"noonday".replace(/\Boo/,"xx");//"nxxnday"
+"noonday".search(/\Boo/);//1
+
+"possibly yesterday".replace(/y\B./,"aaa");//"possibly aaasterday"
+"possibly yesterday".replace(/y\B/,"aaa");//"possibly aaaesterday"
+
+//  \d匹配一个数字 等价于[0-9]  
+//  \D匹配一个非数字 等价于[^0-9] 
+
+// \w 匹配一个单字字符（字母、数字或者下划线） 等价于[A-Za-z0-9_]
+// \W 匹配一个非单字字符  等价于[^A-Za-z0-9_]。
+
+//  \s匹配一个空白字符 
+//  \S匹配一个非空白字符 
+
+"A2d 5".replace(/\d/gi,"x"); //"Axd x"
+"A2d 5".replace(/\D/gi,"x"); //"x2xx5"
+"$_A2 d5%".replace(/\w/gi,"x"); //"$xxx xx%"
+"$_A2 d5%".replace(/\W/gi,"x"); //"x_A2xd5x"
+"$_A2 d5%".replace(/\s/gi,"x"); //"$_A2xd5%"
+"$_A2 d5%".replace(/\S/gi,"x"); //"xxxx xxx"
+
+	//$代表以什么结尾   例如，/t$/ 并不会匹配 "eater" 中的 't'，但是会匹配 "eat" 中的 't'
+	// ^代表以什么开头  例如，/^A/ 并不会匹配 "an A" 中的 'A'，但是会匹配 "An E" 中的 'A'
+
+	//练习
+var str = "test22314234244dgfqeqe232qe13ed";
+var newStr = str.search(/\dqe/);
+console.log(newStr); //24
+str.replace(/\dqe/,11223344);
+var newstr=str.replace(/\dqe/,"A");
+console.log(str); //test22314234244dgfqeqe232qe13ed
+console.log(newstr); //test22314234244dgfqeqe23A13ed
+//原字符串不受影响，返回的新字符串是修改的
+
+console.log("absxsDfe123Ab".replace(/[abd]/,"X")); 
+//XbsxsDfe123Ab
+console.log("absxsDfe123Ab".replace(/[abd]/g,"X"));
+//XXsxsDfe123AX
+console.log("absxsDfe123Ab".replace(/[abd]/gi,"X"));
+//XXsxsXfe123XX
+
+console.log("absxsDfe123Ab".replace(/[^abd]/,"X")); 
+//abXxsDfe123Ab
+console.log("absxsDfe123Ab".replace(/[^abd]/g,"X"));
+//abXXXXXXXXXXb
+console.log("absxsDfe123Ab".replace(/[^abd]/gi,"X"));
+//abXXXDXXXXXAb
+
+console.log("12345667".replace(/[3-9]/gi,"X"));
+//12XXXXXX
+console.log("absxsdfe123Ab".replace(/[a-f1-9]/gi,"X"));
+//XXsxsXXXXXXXX
+console.log("absxsdfe123Ab".replace(/[a-f][1-9]/gi,"X"));
+//absxsdfX23Ab
+//如果单独替换，则需要分组，见后续
+console.log("absxsdfe1Q2e3Ab".replace(/[a-f][1-9][A-Z]/gi,"X"));
+//absxsdfX2Xb
+
+console.log("2017-10-23".replace(/[0-9]/g,"X")); //XXXX-XX-XX
+console.log("2017-10-23".replace(/[0-9-]/g,"X")); //XXXXXXXXXX
+
+
+	//关于 . 除了回车和换行符之外的所有字符
+	//  /ab[0-9][^\r\n]/ //等效于/[ab\d.]/
+console.log("@abc@123@".replace(/@./g,"Q")); //QbcQ23@
+console.log("@abc@123@".replace(/.@/g,"Q")); //@abQ12Q
+
+console.log("This is a Boy is".replace(/is/g,0));
+ //Th0 0 a Boy 0
+console.log("This is a Boy is".replace(/^is/g,0));
+//This is a Boy is
+console.log("This is a Boy is".replace(/is$/g,0));
+//This is a Boy 0
+console.log("This is a Boy is".replace(/is\b/g,0));
+//Th0 0 a Boy 0
+console.log("This is a Boy is".replace(/is\B/g,0));
+//This is a Boy is
+console.log("This is a Boy is".replace(/\bis/g,0));
+//This 0 a Boy 0
+console.log("This is a Boy is".replace(/\Bis/g,0));
+//Th0 is a Boy is
+
+	//注意*在这里是量词，不是充当通配符，充当通配符的是 .
+	//? 出现0次或1次（最多出现1次）
+console.log("AaBbAb_AaaBbbAba".replace(/Aa?/g,0));//0Bb0b_0aBbb0ba
+	//+ 出现1次或多次（至少出现1次）
+console.log("AaBbAb_AaaBbbAba".replace(/Aa+/g,0));//0BbAb_0BbbAba
+
+	//* 出现0次或多次（任意次）
+console.log("AaBbAb_AaaBbbAba".replace(/Aa*/g,0));//0Bb0b_0Bbb0ba
+
+	//{n} 出现n次
+console.log("AaBbAb_AaaBbbAba".replace(/Aa{1}/g,0));//0BbAb_0aBbbAba
+console.log("AaBbAb_AaaBbbAba".replace(/Aa{2}/g,0));//AaBbAb_0BbbAba
+
+	//{n,m} 出现n到m次
+console.log("AaBbAb_AaaBbbAba".replace(/Aa{1,2}/g,0));//0BbAb_0BbbAba
+
+	//{n,} 出现至少n次
+console.log("AaBbAb_AaaBbbAbaAaaaaaaAaaAaaa".replace(/Aa{2,}/g,0)); //AaBbAb_0BbbAba000
+
+console.log("AaBbAb_AaaBbbAbaAaaaaaaAaaAaaa".replace(/Aa{2,4}/g,0)); //AaBbAb_0BbbAba0aa00
+
+	//注意：0到n次的写法{0,n}而不是{,n}
+	
+//5.正则表达式的贪婪模式和非贪婪模式
+"12345678".replace(/\d{3,6}/,'X');//默认为贪婪模式  X78
+
+"12345678".replace(/\d{3,6}?/,'X');//设置为非贪婪模式 在量词后加？   X45678
+
+"12345678".replace(/\d{3,6}?/g,'X');// "XX78"
+
+//6.正则表达式的分组
+console.log("NameNameName_11111".replace(/Name{3}/,"X"));
+//NameNameName_11111
+console.log("NameNameName_11111".replace(/(Name){3}/,"X"));
+//X_11111
+
+console.log("a1b2c3d4e5".replace(/[a-z]\d{3}/,"X")); //a1b2c3d4e5
+console.log("a1b2c3d4e5".replace(/([a-z]\d){3}/,"X")); //Xd4e5
+console.log("a1b2c3d4e5".replace(/([a-z]\d){3,4}/,"X")); //Xe5
+console.log("a1b2c3d4e5".replace(/([a-z]\d){3,4}?/,"X"));//Xd4e5
+
+"abcdefghijk".replace(/abcde|fghijk/g,"X"); //"XX"
+"abcdefghijk_abcdehijk_abcfghijk".replace(/abc(de|fg)hijk/g,"X"); //"abcdefghijk_X_X"
+
+	//注意括号的转义字符，第一个相当于做了分组
+console.log(/^(ab)$/.test("(ab)")); //false
+console.log(/^\(ab\)$/.test("(ab)")); //true
+
+	//分组的 反向引用
+	//如何将2017-10-23转成10/23/2017
+"2017-10-23".replace(/(\d{4})-(\d{2})-(\d{2})/,"$2/$3/$1");
+//"10/23/2017"
+
+	//忽略分组 （？：）
+"2017-10-23".replace(/(?:\d{4})-(\d{2})-(\d{2})/,"$2/$3/$1");
+//"23/$3/10"
+
+//2.RegExp及String相关的正则方法
+//RegExp相关
+	//正则表达式对象的属性
+var reg1 = /\w/;
+var reg2 = /\w/gi;
+console.log(reg1.global,reg1.ignoreCase,reg1.multiline,reg1.lastIndex,reg1.source);
+// false false false 0 "\w"
+console.log(reg2.global,reg2.ignoreCase,reg2.multiline,reg2.lastIndex,reg2.source);
+//true true false 0 "\w"
+
+	//正则表达式RegExp原型方法 test
+console.log(reg2.lastIndex); // 0
+reg2.test("abc23def");
+console.log(reg2.lastIndex); // 1
+reg2.test("abc23def");
+console.log(reg2.lastIndex); //2
+
+while (reg2.test("abc23def")){
+    console.log(reg2.lastIndex);
+}
+//3 4 5 6 7 8
+	//正则表达式RegExp原型方法 exec,可以获得更为详细的信息，返回一个有属性的数组
+var reg3 = /\w/gi;
+var str = "slfls3r3sfsf";
+var returnArray1 = reg3.exec(str);
+console.log(reg3.lastIndex,returnArray1);
+// 1 ["s", index: 0, input: "slfls3r3sfsf"]
+var returnArray2 = reg3.exec(str);
+console.log(reg3.lastIndex,returnArray2);
+// 2 ["l", index: 1, input: "slfls3r3sfsf"]
+
+	//对于非全局模式下返回第一个匹配的和所有的分组项，正则对象的lastIndex不起作用
+var execExp = /\d{1,2}(\d)(\d)/;
+var retExp = execExp.exec("12s342dsfsf233s");
+console.log(retExp instanceof Array,retExp,execExp.lastIndex);
+//true ["342", "4", "2", index: 3, input: "12s342dsfsf233s"] 0
+console.log(retExp instanceof Array,retExp,execExp.lastIndex);
+//true ["342", "4", "2", index: 3, input: "12s342dsfsf233s"] 0
+
+	//对于全局模式下 每检测一次lastIndex增加一次，再次用此正则对象匹配时，匹配的起始点为上一次的lastIndex
+var execExp2 = /\d{1,2}(\d)(\d)/g;
+var ts = "12s342dsfsf233s";
+console.log(execExp2.exec(ts),execExp2.lastIndex);
+//["342", "4", "2", index: 3, input: "12s342dsfsf233s"] 6
+console.log(execExp2.exec(ts),execExp2.lastIndex);
+//["233", "3", "3", index: 11, input: "12s342dsfsf233s"] 14
+
+//String相关
+	//String.prototype.search 注意search忽略 全局g
+console.log("a1b2c3d4".search(/1/));// 1
+console.log("a1b2c3d4".search(/f/));// -1 没找到
+console.log("a1b2c3d4".search(/\d/g));// 1 忽略全局
+console.log("a1b2c3d4".search(/\d\w/g));// 1 忽略全局
+
+	//String.prototype.match 如果匹配不到返回null 匹配到了返回数组，包含的信息有index 原始字符串 有没有g影响很大
+console.log("a1b2c3d4".match(/1/));
+//[ '1', index: 1, input: 'a1b2c3d4' ]
+console.log("a1b2c3d4".match(/f/));//null
+console.log("a1b2c3d4".match(/\d/));
+//[ '1', index: 1, input: 'a1b2c3d4' ]
+console.log("a1b2c3d4".match(/\d/g));
+//[ '1', '2', '3', '4' ]
+
+	// String.prototype.replace
+console.log("a,b,c,d".replace(",","X")); // aXb,c,d
+console.log("a2b3c4d".replace(/[2-3]/,"X")); // aXb3c4d
+console.log("a2b3c4d".replace(/[2-3]/g,"X")); // aXbXc4d
+
+	//String.prototype.split
+console.log("a,b,c,d".split(",")); // ["a", "b", "c", "d"]
+console.log("a2b3c4d".split(/\d/)); // ["a", "b", "c", "d"]
+
+//3.正则表达式应用案例
+//补充
+var str="xx-yy-zz";
+var a=str.split("-");
+console.log(a);  //["xx", "yy", "zz"]
+
+
+var s1 = "dgfhfgh254bhku289fgdhdy675gfh";
+function f1(s1){
+	var news1=s1.match(/\d+/g);
+	console.log(news1);
+}
+f1(s1);
+
+var s2 = "get-element-by-id";
+function f2(a2){
+	var reg=/-(\w)/g;
+	var news2=s2.replace(reg,function(x,$1){
+		if(x=="-"){
+			x.replace("-","");
+		}
+		return $1.toUpperCase();
+	});
+	console.log(news2);
+}
+f2(s2);
+
+var s3 = "测试<a href = http://www.baidu.com/>笔试</a> <a href = http://www.edu2act.cn/>笔试</a>正则";
+function f3(s3){
+	var reg=/w{3}\.\w+\.(com|cn)/gi;
+	console.log(s3.match(reg));
+}
+f3(s3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>
