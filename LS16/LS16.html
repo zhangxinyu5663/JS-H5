@@ -76,7 +76,8 @@ var Person=function(name,age){
 	}
 };
 var p1=new Person("Mike",23); 
-pi.showMe();
+p1.showMe(); //Mike 23
+p1.privateName; //undefined
 
 //构造函数中的this
 	//构造函数中的this指代通过new新创建的对象
@@ -106,7 +107,7 @@ var Person=function (name,age){
 };
 var p1=new Person("Mike",23); 
 p1.showMe(); //报错
-
+showMe();
 //间接调用中的this
 	//通过call/applay间接调用的函数中的this（指代第一个参数）
 objA={name:"AA",x:1};
