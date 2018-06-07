@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ES6中的let与const</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+</body>
+<script type="text/javascript">
+//一、ES5中的var及其缺陷
+//1.无块作用域，可能造成变量污染
+var userId = 123;
+document.onclick = function () {
+    console.log("userId = ",userId);
+};
+	//一长串代码后，假如忘记上边定义了userID，容易重复定义造成变量污染
+var a=2,b=3;
+if(a<b){
+    var userId = 234;
+}
+//点击页面 输出34
+	//可通过IIFE来解决
+(function () {
+    var a=2,b=3;
+    if(a<b){
+        var userId = 234;
+    }
+}());
+
+//2.可能造成变量的非期望共享
+{
+    var a = 23;
+}
+console.log(a);//由于没有块作用域，a可以正常输出
+
+//例2
+for(var i=0;i<5;i++){
+    //do somethings
+}
+console.log("i:",i);//此处i依然存在
+
+for (var i = 0; i < 3; i++) {
+    setTimeout(function() {
+        console.log(new Date, i);
+    }, 1000*i);
+}
+console.log("i：",i);
+//i： 3
+//Wed Jun 06 2018 19:05:03 GMT+0800 (中国标准时间) 3
+//Wed Jun 06 2018 19:05:04 GMT+0800 (中国标准时间) 3
+//Wed Jun 06 2018 19:05:05 GMT+0800 (中国标准时间) 3
+
+	//解决
+for (var i = 0; i < 3; i++) {
+    (function(j) {  // j = i
+        setTimeout(function() {
+            console.log(new Date, j);
+        }, 1000*i);
+    })(i);
+}
+
+
+//二ES6中的let与const
+	//ES6新增了let命令，用于声明变量，用法与var类似
+	//其与var的不同在于，用let声明的变量只在 let 命令所在的代码块 { }内有效
+
+let userId=123;
+document.onclick=function(){
+	console.log("userId=",userId);
+};
+let a=2,b=3;
+if(a<b){
+	let userId=234;
+}
+//点击页面 输出 userId= 123
+
+	//使用let声明变量，可有效避免变量共享缺陷
+for(let i=0;i<3;i++){
+	setTimeout(function(){
+		console.log(new Date,i);
+	},1000*i);
+}
+//Wed Jun 06 2018 19:29:09 GMT+0800 (中国标准时间) 0
+//Wed Jun 06 2018 19:29:10 GMT+0800 (中国标准时间) 1
+//Wed Jun 06 2018 19:29:11 GMT+0800 (中国标准时间) 2
+
+	//let 定义的变量 并不像 var 那样直接作为全局对象的属性
+var x = 23;
+let y = 34;
+console.log(window.x,window.y);//23 undefined
+
+	//ES6常用const来声明常量，也常用来声明不变的函数
+const PI = 3.1415926;
+console.log(PI);
+// PI = 3;//给常量再赋值 报错
+
+const foo;//报错
+const foo = 123;//ok
+
++//const作用域同let
+if(true){
+    const MAX = 5;
+}
+//console.log(MAX);//报错
+
+//const 除了声明常量外，也常用来声明不变的函数
+const fee = function () {
+
+};
+
+//const指向的对象引用不可变，但其属性是可变的
+const a=[];
+a=[1];  //报错
+
+const a=[];
+a.push(12,34);
+a.length=1;
+console.log(a); //可以
+
+//三、let与const的重要特性
+//1.用let声明变量时，在声明前不能使用该变量（let不提升）
+console.log(a); //报错
+let a = 1;
+console.log(a);
+
+var temp = new Date();
+function f() {
+    console.log(temp);
+    if(false){
+        var temp = "Hi!";
+    }
+}
+f(); //undefined
+
+	//上边的代码等价于
+var temp = new Date();
+function f() {
+	var temp;
+    console.log(temp);
+    if(false){
+    	temp = "Hi!";
+    }
+}
+f(); 
+
+//2.暂时性死区特性
+	//只要块级作用域内存在let，它所声明的变量就“绑定”在这个区域，不再受外部影响
+	//let对这个块从一开始就形成了封闭的作用域，凡是在声明之前使用该变量，就会报错
+
+var temp = new Date();
+function f() {
+    console.log(temp); //此时temp不会找到函数作用域以外的temp变量
+    let temp = "Hi!";
+}
+f();  //报错
+
+var temp = new Date();
+function f() {
+    console.log(temp);
+    if(false){
+    	let temp = "Hi!";
+    }
+}
+f(); //输出一个时间
+
+//3.var可以声明重名变量，let和const不可以
+let a=2;
+let a=1; //报错
+
+//4.typeof 将不再是绝对安全的操作（参见实例），养成良好习惯，在使用变量之前定义变量
+typeof b; //"undefined"
+
+typeof b;
+let b;  //报错 
+</script>
+</html>
